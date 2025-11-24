@@ -7,6 +7,8 @@ User = get_user_model()
 
 
 class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """Endpoint for registering new users."""
+
     queryset = User.objects.all()
     serializer_class = RegistrationSerializer
     permission_classes = (permissions.AllowAny,)

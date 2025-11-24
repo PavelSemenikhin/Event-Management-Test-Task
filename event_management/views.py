@@ -15,6 +15,27 @@ from event_management.tasks import send_event_registration_email
 
 
 class EventViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing events and handling user event registrations.
+
+    Features:
+    - Full CRUD operations for the Event model.
+    - Read operations available to all users.
+    - Create/Update/Delete allowed only for admin users.
+    - Endpoint `/events/{id}/register/` allows authenticated users
+      to register for a specific event.
+    - Prevents duplicate registrations using database-level uniqueness.
+    - Triggers an asynchronous Celery task to send an email notification
+      after successful registration.
+    - Supports searching events by title or location.
+
+    Filters:
+    - SearchFilter: ?search=<query> on `title` and `location`.
+
+    Actions:
+    - POST /events/{id}/register/ — register an authenticated user for the event.
+    """
+
     queryset = Event.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ["title", "location"]
