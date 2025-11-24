@@ -16,7 +16,10 @@ services:
       - ./files/media:/files/media
       - ./files/static:/files/static
     depends_on:
-      - db
+      db:
+        condition: service_started
+      redis:
+        condition: service_healthy
     restart: always
 
   db:
@@ -28,6 +31,31 @@ services:
       - "5432:5432"
     volumes:
       - my_db:/var/lib/postgresql/data/pgdata
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery_worker:
+    build: .
+    command: sh -c "celery -A config worker -l info"
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    restart: always
 
 volumes:
   my_db:
