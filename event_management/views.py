@@ -1,7 +1,7 @@
 from django.db import IntegrityError
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, request, status, permissions, filters
+from rest_framework import viewsets, status, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -11,6 +11,7 @@ from event_management.serializers import (
     EventReadSerializer,
     EventRegistrationSerializer,
 )
+from event_management.tasks import send_event_registration_email
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -43,6 +44,14 @@ class EventViewSet(viewsets.ModelViewSet):
         serializer = EventRegistrationSerializer(reg)
         data = serializer.data
         data["detail"] = "Event registered successfully"
+
+        send_event_registration_email.delay(
+            user_email=user.email,
+            event_title=event.title,
+            event_date=str(event.date),
+            event_location=event.location,
+            event_description=event.description,
+        )
 
         return Response(data, status=status.HTTP_201_CREATED)
 
