@@ -27,9 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "event_management",
-    "drf_spectacular",
     "rest_framework",
     "rest_framework_simplejwt",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
