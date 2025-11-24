@@ -27,6 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "event_management",
+    "drf_spectacular",
+    "rest_framework",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -120,3 +123,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 }
+
+
+AUTH_USER_MODEL = "accounts.User"
