@@ -24,8 +24,10 @@ class EventReadSerializer(serializers.ModelSerializer):
 
 
 class EventRegistrationSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(read_only=True, slug_field="username")
+    event = serializers.SlugRelatedField(read_only=True, slug_field="title")
 
     class Meta:
         model = EventRegistration
-        fields = ("id", "created_at")
-        read_only_fields = ("id", "created_at")
+        fields = ("id", "user", "event", "created_at")
+        read_only_fields = fields
